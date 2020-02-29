@@ -2,16 +2,18 @@ import numpy as np
 
 K=25
 
-av=0.01
-aw=0.01
+av=0.04
+aw=0.04
+aEvolution=0.999
 
 nbEpoch=500
-printEpoch=10
+printEpoch=20
 
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
 ############# INITIALIZING #############
+EGraph=[]
 
 ##Getting X and Y
 X=[]
@@ -33,7 +35,6 @@ for y in YData:
 
 Y=np.asarray(Y)
 J=len(Y[0])
-
 
 ##Generating V and W randomly
 V=np.random.uniform(-1,1,(N+1,K))
@@ -101,6 +102,9 @@ for epoch in range(1,nbEpoch+1):
 
             V[n][k] -= aw * dEdV
 
+    ##Change ac and aw
+    av *= aEvolution
+    aw *= aEvolution
 
 
 
