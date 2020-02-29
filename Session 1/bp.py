@@ -1,20 +1,29 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
-K=25
 
-av=0.04
-aw=0.04
+############# SETTINGS #############
+K=10
+
+av=0.07
+aw=0.07
 aEvolution=0.999
 
 nbEpoch=500
-printEpoch=20
+printEpoch=10
+showGraph=False
+
+
+def arrondi(x):
+    return (x>0.5).astype(int)
 
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
-############# INITIALIZING #############
-EGraph=[]
+def activation(x):
+    return sigmoid(x)
 
+############# INITIALIZING #############
 ##Getting X and Y
 X=[]
 Y=[]
@@ -41,7 +50,18 @@ V=np.random.uniform(-1,1,(N+1,K))
 W=np.random.uniform(-1,1,(K+1,J))
 
 
+##Graph
+if showGraph:
+    xAxis=[]
+    EGraph=[]
+
+    fig = plt.gcf()
+    fig.show()
+    fig.canvas.draw()
+    plt.ylabel('Errors')
+
 ############# LEARNING #############
+print("Epoch    av        aw        SSE        acc")
 
 for epoch in range(1,nbEpoch+1):
     ##### Forward Propagation #####
@@ -54,7 +74,7 @@ for epoch in range(1,nbEpoch+1):
     Xbb=np.dot(Xb,V)
 
     ##Computing F
-    F=np.apply_along_axis(sigmoid, 0, Xbb)
+    F=np.apply_along_axis(activation, 0, Xbb)
 
     ##Computing Fb
     Fb=np.concatenate((ones, F), axis=1)
@@ -63,20 +83,34 @@ for epoch in range(1,nbEpoch+1):
     Fbb=np.dot(Fb,W)
 
     ##Computing G
-    G=np.apply_along_axis(sigmoid, 0, Fbb)
+    G=np.apply_along_axis(activation, 0, Fbb)
+    G2=np.apply_along_axis(arrondi, 0, Fbb)
 
     ##Computing E
     E=0
     for i in range(0,I):
         for j in range(0,J):
-            predicted=G[i][j]
+            predicted=G2[i][j]
             target=Y[i][j]
             E+=np.square(predicted-target)
     E/=2
 
     ##Printing error
+    if showGraph:
+        xAxis.append(epoch)
+        EGraph.append(E)
+
+        plt.plot(xAxis,EGraph)
+        fig.canvas.draw()
+
     if epoch % printEpoch==0:
-        print("Epoch", epoch, ":", "%.2f" % E)
+        # print("Epoch", epoch, end='')
+        # print(", av", "%.2f" % av, end='')
+        # print(", aw", "%.2f" % aw, end='')
+        # print(", SSE :", "%.2f" % E)
+        acc=np.sum(G2==Y)/J/I
+        acc=int(acc*100)
+        print(epoch, "     ", "%.3f" % av , "   ", "%.3f" % aw , "   ", "%.3f" % E, "   ",  acc)
 
 
     ##### BACK Propagation #####
@@ -106,16 +140,10 @@ for epoch in range(1,nbEpoch+1):
     av *= aEvolution
     aw *= aEvolution
 
+if showGraph: plt.show()
 
-
-
-
-
-
-
-
-
-
+acc=np.sum(G2==Y)/J/I
+print("accuracy :",int(acc*100),"%")
 
 
 
