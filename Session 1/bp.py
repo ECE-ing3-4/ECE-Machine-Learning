@@ -1,41 +1,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import functions as eng
 
 ############# SETTINGS #############
-K=10
+K=5
 
 av=0.07
 aw=0.07
 aEvolution=0.999
 
 nbEpoch=500
-printEpoch=10
+printEpoch=50
 showGraph=False
 
-
-def arrondi(x):
-    return (x>0.5).astype(int)
-
-def sigmoid(x):
-    return 1/(1+np.exp(-x))
-
-def activation(x):
-    return sigmoid(x)
-
 ############# INITIALIZING #############
-##Getting X and Y
-X=[]
-Y=[]
+#Getting X and Y
 data = np.loadtxt(fname = "data.txt")
-X1,X2,YData=np.hsplit(data, 3)
-X=np.concatenate((X1, X2), axis=1)
-Y=data[:,-1]
+X=data[:,:2]
+YData=data[:,2:]
 
-I=len(X)
 N=len(X[0])
 
-##Formatting Y
+#Formatting Y
 Y=[]
 YUnique=np.unique(YData)
 
@@ -45,12 +31,8 @@ for y in YData:
 Y=np.asarray(Y)
 J=len(Y[0])
 
-##Generating V and W randomly
-V=np.random.uniform(-1,1,(N+1,K))
-W=np.random.uniform(-1,1,(K+1,J))
 
-
-##Graph
+#Graph
 if showGraph:
     xAxis=[]
     EGraph=[]
@@ -60,42 +42,20 @@ if showGraph:
     fig.canvas.draw()
     plt.ylabel('Errors')
 
+
 ############# LEARNING #############
-print("Epoch    av        aw        SSE        acc")
+#Generating V and W randomly
+V=np.random.uniform(-1,1,(N+1,K))
+W=np.random.uniform(-1,1,(K+1,J))
 
 for epoch in range(1,nbEpoch+1):
-    ##### Forward Propagation #####
+    # Forward Propagation
+    Yp,F,Fb,Xb = eng.fwp(X,V,W)
 
-    ##Computing Xb
-    ones=np.ones((I, 1))
-    Xb=np.concatenate((ones, X), axis=1)
+    #Computing Error
+    E = eng.error(Y,Yp,J)
 
-    ##Computing Xbb
-    Xbb=np.dot(Xb,V)
-
-    ##Computing F
-    F=np.apply_along_axis(activation, 0, Xbb)
-
-    ##Computing Fb
-    Fb=np.concatenate((ones, F), axis=1)
-
-    ##Computing Fbb
-    Fbb=np.dot(Fb,W)
-
-    ##Computing G
-    G=np.apply_along_axis(activation, 0, Fbb)
-    G2=np.apply_along_axis(arrondi, 0, Fbb)
-
-    ##Computing E
-    E=0
-    for i in range(0,I):
-        for j in range(0,J):
-            predicted=G2[i][j]
-            target=Y[i][j]
-            E+=np.square(predicted-target)
-    E/=2
-
-    ##Printing error
+    #Printing error
     if showGraph:
         xAxis.append(epoch)
         EGraph.append(E)
@@ -104,54 +64,31 @@ for epoch in range(1,nbEpoch+1):
         fig.canvas.draw()
 
     if epoch % printEpoch==0:
-        # print("Epoch", epoch, end='')
-        # print(", av", "%.2f" % av, end='')
-        # print(", aw", "%.2f" % aw, end='')
-        # print(", SSE :", "%.2f" % E)
-        acc=np.sum(G2==Y)/J/I
-        acc=int(acc*100)
-        print(epoch, "     ", "%.3f" % av , "   ", "%.3f" % aw , "   ", "%.3f" % E, "   ",  acc)
+        print("epoch", epoch, ":", "%.3f" % E)
 
 
-    ##### BACK Propagation #####
+    #BACK Propagation
+    V,W = eng.bp(V,W,Y,Yp,F,Fb,Xb,J,K,N,av,aw)
 
-    ##Computing the new W
-    for k in range(0,K+1):
-        for j in range(0,J):
-            #for W[k][j]
-            dEdWkj=0
-            for i in range(0,I):
-                dEdWkj += (G[i][j] - Y[i][j]) * G[i][j] * (1 - G[i][j]) *Fb[i][k]
-
-            W[k][j] -= aw * dEdWkj
-
-    ##Computing the new V
-    for n in range(0,N+1):
-        for k in range(0,K):
-            #for V[n][k]
-            dEdV=0
-            for i in range(0,I):
-                for j in range(0,J):
-                    dEdV += (G[i][j] - Y[i][j]) * G[i][j] * (1 - G[i][j]) * W[k][j] * F[i][k] * (1 - F[i][k]) * Xb[i][n]
-
-            V[n][k] -= aw * dEdV
-
-    ##Change ac and aw
+    #Change ac and aw
     av *= aEvolution
     aw *= aEvolution
 
 if showGraph: plt.show()
 
-acc=np.sum(G2==Y)/J/I
-print("accuracy :",int(acc*100),"%")
+print()
+print()
 
+##Testing
+XTest=[[2,2],[4,4],[4.5,1.5]]
 
+R=eng.fwp(XTest,V,W)
 
+R=R[0]
+R=np.apply_along_axis(eng.arrondi, 0, R)
 
-
-
-
-
+for i in range(len(XTest)):
+    print(XTest[i], " \t", R[i])
 
 
 
