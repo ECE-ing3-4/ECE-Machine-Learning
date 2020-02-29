@@ -3,15 +3,17 @@ import matplotlib.pyplot as plt
 import functions as eng
 
 ############# SETTINGS #############
-K=5
+K=10
 
-av=0.07
-aw=0.07
+av=0.06
+aw=0.06
 aEvolution=0.999
 
 nbEpoch=500
+
 printEpoch=50
-showGraph=False
+graphEpoch=10
+showGraph=True
 
 ############# INITIALIZING #############
 #Getting X and Y
@@ -55,14 +57,15 @@ for epoch in range(1,nbEpoch+1):
     #Computing Error
     E = eng.error(Y,Yp,J)
 
-    #Printing error
-    if showGraph:
+    #Printing Graph
+    if showGraph and epoch % graphEpoch==0:
         xAxis.append(epoch)
         EGraph.append(E)
 
         plt.plot(xAxis,EGraph)
         fig.canvas.draw()
 
+    #Printing error
     if epoch % printEpoch==0:
         print("epoch", epoch, ":", "%.3f" % E)
 
@@ -79,8 +82,14 @@ if showGraph: plt.show()
 print()
 print()
 
+##Printing results
+# print(Y)
+# print(np.apply_along_axis(eng.arrondi, 0, Yp))
+# print()
+# print()
+
 ##Testing
-XTest=[[2,2],[4,4],[4.5,1.5]]
+XTest=[[2,2],[4,4],[4.5,1.5],[1.5,1]]
 
 R=eng.fwp(XTest,V,W)
 
@@ -88,7 +97,9 @@ R=R[0]
 R=np.apply_along_axis(eng.arrondi, 0, R)
 
 for i in range(len(XTest)):
-    print(XTest[i], " \t", R[i])
+    rCateg=R[i]
+    r=sum(YUnique*rCateg)
+    print(XTest[i], " \t", rCateg, " \t", r)
 
 
 
