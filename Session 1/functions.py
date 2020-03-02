@@ -31,6 +31,7 @@ def fwp(X,V,W):
     #Computing Fbb
     Fbb=np.dot(Fb,W)
 
+
     #Computing G
     G=np.apply_along_axis(activation, 0, Fbb)
 
@@ -44,11 +45,12 @@ def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
     for k in range(0,K+1):
         for j in range(0,J):
             #for W[k][j]
-            dEdWkj=0
+            dEdW=0
             for i in range(0,I):
-                dEdWkj += (G[i][j] - Y[i][j]) * G[i][j] * (1 - G[i][j]) *Fb[i][k]
+                dEdW += (G[i][j] - Y[i][j]) * G[i][j] * (1 - G[i][j]) *Fb[i][k]
+            #(G-Y)*G*(1-G)
 
-            W[k][j] -= aw * dEdWkj
+            W[k][j] -= aw * dEdW
 
     #Computing the new V
     for n in range(0,N+1):
@@ -65,11 +67,11 @@ def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
 
 def error(Y,Yp,J):
     I=len(Y)
-    G2=np.apply_along_axis(arrondi, 0, Yp)
+    #Yp=np.apply_along_axis(arrondi, 0, Yp)
     E=0
     for i in range(0,I):
         for j in range(0,J):
-            predicted=G2[i][j]
+            predicted=Yp[i][j]
             target=Y[i][j]
             E+=np.square(predicted-target)
     E/=2
