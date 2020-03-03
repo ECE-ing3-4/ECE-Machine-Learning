@@ -40,6 +40,7 @@ def fwp(X,V,W):
 def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
     I=len(Y)
     #BACK Propagation
+    H=(G-Y)*G*(1-G)
 
     #Computing the new W
     for k in range(0,K+1):
@@ -47,7 +48,7 @@ def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
             #for W[k][j]
             dEdW=0
             for i in range(0,I):
-                dEdW += (G[i][j] - Y[i][j]) * G[i][j] * (1 - G[i][j]) *Fb[i][k]
+                dEdW += H[i][j] *Fb[i][k]
             #(G-Y)*G*(1-G)
 
             W[k][j] -= aw * dEdW
@@ -59,7 +60,7 @@ def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
             dEdV=0
             for i in range(0,I):
                 for j in range(0,J):
-                    dEdV += (G[i][j] - Y[i][j]) * G[i][j] * (1 - G[i][j]) * W[k][j] * F[i][k] * (1 - F[i][k]) * Xb[i][n]
+                    dEdV += H[i][j] * W[k][j] * F[i][k] * (1 - F[i][k]) * Xb[i][n]
 
             V[n][k] -= aw * dEdV
 
@@ -76,3 +77,20 @@ def error(Y,Yp,J):
             E+=np.square(predicted-target)
     E/=2
     return E
+
+def getData(file):
+    data = np.loadtxt(fname = "data.txt")
+    X=data[:,:2]
+    YData=data[:,2:]
+
+
+    #Formatting Y
+    Y=[]
+    YUnique=np.unique(YData)
+
+    for y in YData:
+        Y.append((YUnique==y[0]).astype(int))
+
+    Y=np.asarray(Y)
+
+    return X,Y,YUnique

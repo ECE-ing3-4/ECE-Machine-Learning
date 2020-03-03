@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import functions as eng
+from functions import *
 
 ############# SETTINGS #############
 K=10
@@ -9,28 +9,17 @@ av=0.06
 aw=0.06
 aEvolution=0.999
 
-nbEpoch=500
+nbEpoch=200
 
-printEpoch=50
+printEpoch=20
 graphEpoch=10
-showGraph=True
+showGraph=False
 
 ############# INITIALIZING #############
 #Getting X and Y
-data = np.loadtxt(fname = "data.txt")
-X=data[:,:2]
-YData=data[:,2:]
+X, Y, YUnique = getData("data.txt")
 
 N=len(X[0])
-
-#Formatting Y
-Y=[]
-YUnique=np.unique(YData)
-
-for y in YData:
-    Y.append((YUnique==y[0]).astype(int))
-
-Y=np.asarray(Y)
 J=len(Y[0])
 
 
@@ -52,10 +41,10 @@ W=np.random.uniform(-1,1,(K+1,J))
 
 for epoch in range(1,nbEpoch+1):
     # Forward Propagation
-    Yp,F,Fb,Xb = eng.fwp(X,V,W)
+    Yp,F,Fb,Xb = fwp(X,V,W)
 
     #Computing Error
-    E = eng.error(Y,Yp,J)
+    E = error(Y,Yp,J)
 
     #Printing Graph
     if showGraph and epoch % graphEpoch==0:
@@ -71,7 +60,7 @@ for epoch in range(1,nbEpoch+1):
 
 
     #BACK Propagation
-    V,W = eng.bp(V,W,Y,Yp,F,Fb,Xb,J,K,N,av,aw)
+    V,W = bp(V,W,Y,Yp,F,Fb,Xb,J,K,N,av,aw)
 
     #Change ac and aw
     av *= aEvolution
@@ -84,17 +73,17 @@ print()
 
 ##Printing results
 # print(Y)
-# print(np.apply_along_axis(eng.arrondi, 0, Yp))
+# print(np.apply_along_axis(arrondi, 0, Yp))
 # print()
 # print()
 
 ##Testing
 XTest=[[2,2],[4,4],[4.5,1.5],[1.5,1]]
 
-R=eng.fwp(XTest,V,W)
+R=fwp(XTest,V,W)
 
 R=R[0]
-R=np.apply_along_axis(eng.arrondi, 0, R)
+R=np.apply_along_axis(arrondi, 0, R)
 
 for i in range(len(XTest)):
     rCateg=R[i]
