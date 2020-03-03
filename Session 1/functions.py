@@ -22,6 +22,15 @@ def fwp(X,V,W):
     #Computing Xbb
     Xbb=np.dot(Xb,V)
 
+    print(Xb)
+    print(V)
+    print(Xbb)
+
+    print(Xb.shape)
+    print(V.shape)
+    print(Xbb.shape)
+    assert False
+
     #Computing F
     F=np.apply_along_axis(activation, 0, Xbb)
 
@@ -30,7 +39,6 @@ def fwp(X,V,W):
 
     #Computing Fbb
     Fbb=np.dot(Fb,W)
-
 
     #Computing G
     G=np.apply_along_axis(activation, 0, Fbb)

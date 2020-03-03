@@ -13,7 +13,7 @@ nbEpoch=1000
 
 printEpoch=20
 graphEpoch=10
-showGraph=True
+showGraph=False
 
 ############# INITIALIZING #############
 #Getting X and Y
