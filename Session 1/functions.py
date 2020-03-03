@@ -42,17 +42,6 @@ def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
     #BACK Propagation
     H=(G-Y)*G*(1-G)
 
-    #Computing the new W
-    for k in range(0,K+1):
-        for j in range(0,J):
-            #for W[k][j]
-            dEdW=0
-            for i in range(0,I):
-                dEdW += H[i][j] *Fb[i][k]
-            #(G-Y)*G*(1-G)
-
-            W[k][j] -= aw * dEdW
-
     #Computing the new V
     for n in range(0,N+1):
         for k in range(0,K):
@@ -63,6 +52,17 @@ def bp(V,W,Y,G,F,Fb,Xb,J,K,N,av,aw):
                     dEdV += H[i][j] * W[k][j] * F[i][k] * (1 - F[i][k]) * Xb[i][n]
 
             V[n][k] -= aw * dEdV
+
+    #Computing the new W
+    for k in range(0,K+1):
+        for j in range(0,J):
+            #for W[k][j]
+            dEdW=0
+            for i in range(0,I):
+                dEdW += H[i][j] *Fb[i][k]
+            #(G-Y)*G*(1-G)
+
+            W[k][j] -= aw * dEdW
 
     return V,W
 
@@ -76,6 +76,11 @@ def error(Y,Yp,J):
             target=Y[i][j]
             E+=np.square(predicted-target)
     E/=2
+
+    # E=np.apply_along_axis(abs, 0, Yp-Y)
+    # E/=2
+
+
     return E
 
 def getData(file):
@@ -94,3 +99,4 @@ def getData(file):
     Y=np.asarray(Y)
 
     return X,Y,YUnique
+

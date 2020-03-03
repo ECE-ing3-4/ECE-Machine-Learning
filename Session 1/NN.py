@@ -6,14 +6,14 @@ from functions import *
 K=10
 
 av=0.06
-aw=0.06
-aEvolution=0.999
+aw=av
+aEvolution=1
 
-nbEpoch=200
+nbEpoch=1000
 
 printEpoch=20
 graphEpoch=10
-showGraph=False
+showGraph=True
 
 ############# INITIALIZING #############
 #Getting X and Y
