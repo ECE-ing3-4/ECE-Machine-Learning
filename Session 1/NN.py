@@ -9,11 +9,11 @@ av=0.06
 aw=av
 aEvolution=1
 
-nbEpoch=1000
+nbEpoch=500
 
 printEpoch=20
 graphEpoch=10
-showGraph=False
+showGraph=True
 
 ############# INITIALIZING #############
 #Getting X and Y

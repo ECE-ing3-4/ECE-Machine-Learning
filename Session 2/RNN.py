@@ -7,12 +7,12 @@ def sigmoid(x):
 def activation(x):
     return sigmoid(x)
 
-nbEpoch=8
+nbEpoch=10
 totalDataSize=20
 pTraining=0.75
 
 N=8
-K=3
+K=1
 J=1
 I=int(totalDataSize*pTraining)
 
@@ -31,11 +31,14 @@ ones=np.ones((I,1))
 
 
 for epoch in range(nbEpoch):
-    Xb=np.concatenate((ones, XTraining, F), axis=1)
-    Xbb=np.dot(Xb,V)
-    F=np.apply_along_axis(activation, 0, Xbb)
-    Fb=np.concatenate((ones, F), axis=1)
-    Fbb=np.dot(Fb,W)
-    G=np.apply_along_axis(activation, 0, Fbb)
+    for t in range(N):
+        Xb=np.concatenate((ones, XTraining, F), axis=1)
+        Xbb=np.dot(Xb,V)
+        F=np.apply_along_axis(activation, 0, Xbb)
+        Fb=np.concatenate((ones, F), axis=1)
+        Fbb=np.dot(Fb,W)
+        G=np.apply_along_axis(activation, 0, Fbb)
+    print(G)
+    print()
 
 print(G)
