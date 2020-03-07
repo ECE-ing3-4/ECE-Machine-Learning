@@ -8,7 +8,7 @@ def activation(x):
     return sigmoid(x)
 
 nbEpoch=10
-totalDataSize=40
+totalDataSize=10
 pTraining=0.75
 
 N=8
@@ -22,22 +22,16 @@ XTraining,XTesting = X[:I], X[I:]
 YTraining,YTesting = Y[:I], Y[I:]
 
 
-V=np.random.uniform(-1,1,(N+K,K))
-F=np.zeros((I,K))
+Vx=np.random.uniform(-1,1,N)
+Vf=np.random.uniform(-1,1,(1,1))
 
 ones=np.ones((I,1))
 
 
 # for epoch in range(nbEpoch):
+F=np.zeros((I,K))
 for t in range(1,N):
-    Xb=np.concatenate((ones, XTraining, F), axis=1)
-    Xbb=np.dot(Xb,V)
+    input=XTraining[:,[t]] #column t
+    F = np.dot(F,Vf) + np.dot(input,Vx[t])
 
-    # F=np.apply_along_axis(activation, 0, Xbb)
-    # Fb=np.concatenate((ones, F), axis=1)
-    # Fbb=np.dot(Fb,W)
-    # G=np.apply_along_axis(activation, 0, Fbb)
-print(X[0])
-print(F[0])
-print(Xb[0])
-print(Xbb[0])
+print(F)
