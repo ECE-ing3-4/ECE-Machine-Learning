@@ -1,17 +1,17 @@
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 #Getting X and Y
 data = np.loadtxt(fname = "data_kmeans.txt")
-X=data[:,:1]
-Y=data[:,1:]
+data = np.loadtxt(fname = "data_pca.txt")
+X1=data[:,:1]
+X2=data[:,1:]
 
 fig = plt.figure()
 ax = fig.gca()
 
-ax.scatter(X, Y)
+ax.scatter(X1, X2)
 
-ax.set_xlabel('X Label')
-ax.set_ylabel('Y Label')
+ax.set_xlabel('X1 Label')
+ax.set_ylabel('X2 Label')
 plt.show()
