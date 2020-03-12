@@ -1,41 +1,71 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def sigmoid(x):
-    return 1/(1+np.exp(-x))
-
-def activation(x):
-    return sigmoid(x)
-
 nbEpoch=10
-totalDataSize=10
+totalDataSize=40
 pTraining=0.75
 
 N=8
 I=int(totalDataSize*pTraining)
 
 X=np.random.randint(2, size=(totalDataSize,N))
-Y=np.sum(X,axis=1)
+Y=np.sum(X,axis=1).reshape((totalDataSize,1))
 XTraining,XTesting = X[:I], X[I:]
 YTraining,YTesting = Y[:I], Y[I:]
 
 ones=np.ones((I,1))
 
+def fwp(I,N,XTraining,Vf,Vx):
+    #forward propagation
+    Fs=[]
+    F=np.zeros((I,1))
+    for t in range(0,N):
+        input=XTraining[:,[t]] #column t
+        F= F*Vf + input*Vx
+        Fs.append(F)
+
+    return Fs,F
+
+def dEdVx(N,I,YOutput,YTraining,Vf,XTraining):
+    sum=0
+    for t in range(N):
+        sum2=0
+        for i in range(I):
+            sum2+=(YOutput[i][0]-YTraining[i][0])*XTraining[i][t]
+        sum+=sum2*(Vf**(N-t))
+
+    return sum
+
+def dEdVf(N,I,YOutput,YTraining,Vf,Fs):
+    sum=0
+    for t in range(N):
+        sum2=np.sum((YOutput-YTraining)*Fs[t-1])
+        #print("sum2",sum2)
+        sum+=sum2*(Vf**(N-t))
+
+    return sum
+
 #initialisation
-Vx=np.random.uniform(-1,1,N)
-Vf=np.random.uniform(-1,1,(1,1))
+Vx=np.random.uniform(0,1)
+Vf=np.random.uniform(0,1)
+alpha=0.0001
 
-#forward propagation
-# for epoch in range(nbEpoch):
-F=np.zeros((I,1))
-for t in range(1,N):
-    input=XTraining[:,[t]] #column t
-    F = np.dot(F,Vf) + np.dot(input,Vx[t])
+for epoch in range(500):
+    print("Vx",Vx," Vf",Vf)
+    Fs,YOutput=fwp(I,N,XTraining,Vf,Vx)
 
-print(F)
-print()
+    #compute the error
+    E=np.sum(np.square(YOutput-YTraining))/2
 
-#backpropagation
+    print(E)
 
+    dEx=dEdVx(N,I,YOutput,YTraining,Vf,XTraining)
+    dEf=dEdVf(N,I,YOutput,YTraining,Vf,Fs)
+    #print("DEX",dEx," DEF",dEf)
 
-print(F)
+    Vx=Vx-alpha*dEx
+    Vf=Vf-alpha*dEf
+    print()
+
+# print(YOutput)
+# print(YTraining)
