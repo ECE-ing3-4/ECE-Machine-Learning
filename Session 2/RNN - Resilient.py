@@ -48,10 +48,15 @@ def dEdVf(N,I,YOutput,YTraining,Vf,Fs):
 #initialisation
 Vx=np.random.uniform(0,1)
 Vf=np.random.uniform(0,1)
-alpha=0.0001
+mup=1.2
+mun=0.5
+deltax=0.001
+deltaf=0.001
+dEx=1
+dEf=1
 
-for epoch in range(500):
-    #("Vx",Vx," Vf",Vf)
+for epoch in range(5000):
+    #print("Vx",Vx," Vf",Vf)
     Fs,YOutput=fwp(I,N,XTraining,Vf,Vx)
 
     #compute the error
@@ -59,13 +64,24 @@ for epoch in range(500):
 
     if epoch%50==0 : print(E)
 
+    dExOLD=dEx
+    dEfOLD=dEf
     dEx=dEdVx(N,I,YOutput,YTraining,Vf,XTraining)
     dEf=dEdVf(N,I,YOutput,YTraining,Vf,Fs)
     #print("DEX",dEx," DEF",dEf)
 
-    Vx=Vx-alpha*dEx
-    Vf=Vf-alpha*dEf
+    if (dExOLD*dEx>0):
+        deltax*=mup
+    else:
+        deltax*=mun
 
+    if (dEfOLD*dEf>0):
+        deltaf*=mup
+    else:
+        deltaf*=mun
+
+    Vx=Vx-np.sign(dEx)*deltax
+    Vf=Vf-np.sign(dEf)*deltaf
 
 # print(YOutput)
 # print(YTraining)
