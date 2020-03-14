@@ -55,7 +55,7 @@ deltaf=0.001
 dEx=1
 dEf=1
 
-for epoch in range(5000):
+for epoch in range(1000):
     #print("Vx",Vx," Vf",Vf)
     Fs,YOutput=fwp(I,N,XTraining,Vf,Vx)
 
