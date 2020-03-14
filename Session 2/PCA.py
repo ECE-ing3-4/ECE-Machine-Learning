@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 #Getting X and Y
 X = np.loadtxt(fname = "data_pca.txt")
 
-plt.scatter(X[:,0], X[:,1], marker="x")
-#plt.show()
 
 
 I=len(X)
@@ -25,6 +23,23 @@ for x in Xb:
 sigma/=I
 
 #computing the eigenvectors
-eigen = np.linalg.eig(sigma)
+eigenVects = np.linalg.eig(sigma)
 eigenVals = np.linalg.eigvals(sigma)
+
+#sorting eigens
+indexMax=np.argmax(eigenVals)
+l=eigenVals[indexMax]
+u=eigenVects[indexMax]
+
+# Yb=Xb*u
+# Y=Yb+mu
+
+Yb = Xb.dot(u)
+
+#print(Y)
+
+plt.scatter(range(7), range(7)*l, marker="*")
+plt.scatter(X[:,0], X[:,1], marker="x")
+plt.show()
+
 
