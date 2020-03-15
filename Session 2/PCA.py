@@ -23,22 +23,22 @@ for x in Xb:
 sigma/=I
 
 #computing the eigenvectors
-eigenVects = np.linalg.eig(sigma)
-eigenVals = np.linalg.eigvals(sigma)
+eig_vals, eig_vecs = np.linalg.eig(sigma)
 
 #sorting eigens
-indexMax=np.argmax(eigenVals)
-l=eigenVals[indexMax]
-u=eigenVects[indexMax]
+indexMax=np.argmax(eig_vals)
+l=eig_vals[indexMax]
+u=eig_vecs[indexMax]
 
-# Yb=Xb*u
-# Y=Yb+mu
-
+#Yb=Xb*u
 Yb = Xb.dot(u)
+Y=Yb#+mu
+
+
 
 #print(Y)
 
-plt.scatter(range(7), range(7)*l, marker="*")
+plt.scatter(Y, np.zeros(len(Y)), marker="*")
 plt.scatter(X[:,0], X[:,1], marker="x")
 plt.show()
 
