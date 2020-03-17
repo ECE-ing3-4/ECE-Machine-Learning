@@ -31,12 +31,13 @@ l=eig_vals[indexMax]
 u=eig_vecs[indexMax]
 
 #Yb=Xb*u
-Yb = Xb.dot(u)
-Y=Yb#+mu
+#temp = Xb.dot(u)
+# Yb=temp*u
+# Y=Yb#+mu
 
 #print(Y)
 
 plt.scatter(X[:,0], X[:,1], marker="x")
-plt.show()
-plt.scatter(Y, np.zeros(len(Y)), marker="*")
+
+# plt.scatter(Y, np.zeros(len(Y)), marker="*")
 plt.show()
