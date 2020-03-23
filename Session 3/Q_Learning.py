@@ -14,7 +14,7 @@ plt.ylabel("Y")
 
 #initial cash flow in USD
 initialBalance = 5000
-balance=initialBalance
+
 
 #initial nb of action
 nbActionsAchetees = 0
@@ -32,52 +32,63 @@ alpha = 0.05
 #discount factor
 gamma = 0.05
 
-def computeDD(t,nb):
-    price=close[t]
+def computeCurrentDD(nb):
+    price=close[-1]
     return nb*price
 
-def execute(action,t):
+def execute(balance,nbActionsAchetees,action,t):
     price=close[t]
     totalPrice=volumeTransaction*price
     newBalance=balance
     newNbActionsAchetees=nbActionsAchetees
 
-    if action==1 and balance>=totalPrice:#buy
+    if action==0 and balance>=totalPrice:#buy
         newBalance=balance -totalPrice
         newNbActionsAchetees=nbActionsAchetees+volumeTransaction
         #assert newBalance>0
 
-    elif action==2 and nbActionsAchetees>=volumeTransaction:#sell
+    elif action==1 and nbActionsAchetees>=volumeTransaction:#sell
         newBalance= balance+totalPrice
         newNbActionsAchetees=nbActionsAchetees-volumeTransaction
         #assert newNbActionsAchetees>0
 
     return newBalance,newNbActionsAchetees
 
+def simulatePolicy(p):
+    balance=initialBalance
+    nbActions=0
+    for ordre in range(len(p)):
+        balance,nbActions=execute(balance,nbActions,p[ordre],ordre)
+        #print("bal",balance,"  nbaction",nbActions)
+
+    return balance, nbActions
 
 #updating Q dans un while
 #while pas convergence (convergence = pas d'amelioration)
-for i in range(100):
-    for t in range(N-2,-1,-1):
+Q= np.zeros((N,3))
 
-        for a in range(3):
-            #print("t",t," a",a)
-            newBalance,newNbActionsAchetees=execute(a,t)
-            DD=computeDD(t+1,newNbActionsAchetees) #draw down
-            equity=newBalance + DD
-            reward= equity - initialBalance
+for i in range(10):
+    print(np.round(Q,2))
+    print()
+    #tester Q
+    policy=np.argmax(Q,axis=1)
+    newBal,newNbAction=simulatePolicy(policy)
+    DD=computeCurrentDD(newNbAction) #draw down
+    equity=newBal + DD
+    reward = equity - initialBalance
 
-            Q[t][a]= (1-alpha) * Q[t][a] + alpha * (reward + gamma * max(Q[t+1]))
-            #print("ok")
+    newQ=[]
+    for t in range(0,N-1):
+        #mettre a jour Q
+        newQ.append((1-alpha) * Q[t] + alpha * (reward + gamma * max(Q[t+1])))
 
-        #action=np.argmax(Q[t])
+    newQ.append([0,0,0])
+    Q=newQ
 
-
-print(Q)
+print(np.round(Q,3))
 policy=np.argmax(Q,axis=1)
 
 
 # t=state=date
 # a=action = buy/sell/hold
 # policy = quelle action faire a chaque instant : P[t]=action
-
