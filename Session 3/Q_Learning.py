@@ -1,17 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+file="ge.csv"
 file="bank_of_america.csv"
 date = np.loadtxt(fname = file,dtype=str, delimiter=',', skiprows=1,usecols=0)
 close = np.loadtxt(fname = file, delimiter=',', skiprows=1,usecols=4)
 N=len(date)
 states=np.unique(close)
-
-# plt.scatter(date, close, marker="x")
-# plt.xlabel("X")
-# plt.ylabel("Y")
-#♥plt.show()
-
 
 #A : 3: hold, buy, sell
 
@@ -21,13 +16,12 @@ alpha = 0.05
 #discount factor
 gamma = 0.05
 
-
 #while pas convergence (convergence = pas d'amelioration)
 Q= np.zeros((N,3))
 
 for i in range(10):
-    print(np.round(Q,2))
-    print()
+    # print(np.round(Q,2))
+    # print()
 
     for t in range(0,N-1):
         for a in range(3):
@@ -63,7 +57,7 @@ for t in range(N):
     action=policy[t]
     price=close[t]
 
-    volumeTransaction=int(balance/close[t]*0.05)
+    #volumeTransaction=int(balance/close[t]*0.05)
     prixTransaction = volumeTransaction*close[t]
 
     if action == 0 and balance>=prixTransaction:#buy
@@ -72,7 +66,7 @@ for t in range(N):
 
     elif action == 1 :#sell
         balance += nbActions*close[t]
-        nbActions =0
+        nbActions = 0
 
     #elif action == 2:#hold
         #♣do nothing
@@ -89,12 +83,12 @@ plt.ylabel("balance")
 plt.show()
 
 
-# plt.scatter(date, close, marker="x")
-# buy=(policy==0)*close
-# plt.scatter(date, buy, marker="*")
-# sell=(policy==1)*close
-# plt.scatter(date, sell, marker="o")
-# plt.xlabel("X")
-# plt.ylabel("Y")
-# plt.show()
+plt.plot(close)
+buy=(policy==0)*close
+plt.scatter(date, buy, marker="*")
+sell=(policy==1)*close
+plt.scatter(date, sell, marker="o")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
 
