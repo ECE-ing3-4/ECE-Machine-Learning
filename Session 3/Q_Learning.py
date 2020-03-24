@@ -77,18 +77,24 @@ for t in range(N):
 print("Final balance")
 print(balance + nbActions*close[N-1])
 
-plt.plot(bal)
-plt.xlabel("T")
-plt.ylabel("balance")
-plt.show()
+nb=100
 
+fig, ax = plt.subplots(2, sharex='col', sharey='row')
 
-plt.plot(close)
+ax[0].plot(bal[:nb])
+ax[0].set(ylabel='USD',title='Balance')
+
+ax[1].plot(close[:nb])
+
 buy=(policy==0)*close
-plt.scatter(date, buy, marker="*")
+buy[buy==0]=float('nan')
+ax[1].scatter(date[:nb], buy[:nb], marker="*")
+
 sell=(policy==1)*close
-plt.scatter(date, sell, marker="o")
-plt.xlabel("X")
-plt.ylabel("Y")
+sell[sell==0]=float('nan')
+ax[1].scatter(date[:nb], sell[:nb], marker="o")
+
+ax[1].set(ylabel='USD', title='Le cours')
+
 plt.show()
 
