@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from functions import *
 
 ############# SETTINGS #############
-K=10
+K=100
 
 av=0.06
 aw=av
